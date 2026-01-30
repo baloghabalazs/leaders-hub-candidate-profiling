@@ -26,7 +26,7 @@ const ProfileResult: React.FC<ProfileResultProps> = ({ result, onReset }) => {
         <span className="text-sm font-black text-[#323d5a]">{value}%</span>
       </div>
       <div className="h-3 bg-gray-100 rounded-full overflow-hidden border border-gray-50">
-        <div 
+        <div
           className={`h-full ${color} transition-all duration-1000 ease-out shadow-sm`}
           style={{ width: `${value}%` }}
         ></div>
@@ -48,7 +48,7 @@ const ProfileResult: React.FC<ProfileResultProps> = ({ result, onReset }) => {
             </p>
           </div>
         </div>
-        
+
         <div className="p-8 md:p-14 space-y-16">
           <section>
             <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.25em] mb-10 flex items-center gap-4">
@@ -93,20 +93,19 @@ const ProfileResult: React.FC<ProfileResultProps> = ({ result, onReset }) => {
           <p className="text-gray-500 font-medium">Személyre szabott, magas konverziójú megkeresések</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {result.openingMessages.map((msg, idx) => (
             <div key={idx} className="group glass-card rounded-[2.5rem] p-8 md:p-10 border border-gray-100 hover:border-blue-200 transition-all duration-500">
               <div className="flex items-center justify-between mb-8">
-                <span className={`text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${
-                  msg.type === 'product' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'
-                }`}>
+                <span className={`text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${msg.type === 'product' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'
+                  }`}>
                   {msg.type === 'product' ? 'Megoldás Fókusz' : 'Lehetőség Fókusz'}
                 </span>
                 <span className="text-gray-200 font-black text-3xl">0{idx + 1}</span>
               </div>
-              
+
               <h4 className="text-lg font-black text-[#323d5a] mb-6">{msg.title}</h4>
-              
+
               <div className="bg-white border border-gray-50 rounded-3xl p-6 mb-6 shadow-inner">
                 <p className="text-gray-800 text-sm leading-relaxed font-medium">"{msg.text}"</p>
               </div>
@@ -118,13 +117,12 @@ const ProfileResult: React.FC<ProfileResultProps> = ({ result, onReset }) => {
                 </p>
               </div>
 
-              <button 
+              <button
                 onClick={() => handleCopy(msg.text, idx)}
-                className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
-                  copiedIndex === idx 
-                  ? 'bg-emerald-500 text-white' 
-                  : 'bg-[#323d5a] text-white hover:bg-blue-600'
-                }`}
+                className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${copiedIndex === idx
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-[#323d5a] text-white hover:bg-blue-600'
+                  }`}
               >
                 {copiedIndex === idx ? 'Másolva!' : 'Szöveg másolása'}
               </button>
