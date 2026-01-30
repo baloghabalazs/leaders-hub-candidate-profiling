@@ -22,7 +22,18 @@ const TRAITS_OPTIONS = [
   { label: "Visszahúzódó", value: "introverted" },
   { label: "Pozitív gondolkodású", value: "positive" },
   { label: "Elégedetlen", value: "dissatisfied" },
-  { label: "Alkalmazott", value: "employee" }
+  { label: "Alkalmazott", value: "employee" },
+  // Új karakterjegyek
+  { label: "Ambiciózus", value: "ambitious" },
+  { label: "Csapatjátékos", value: "team_player" },
+  { label: "Kreatív", value: "creative" },
+  { label: "Analitikus", value: "analytical" },
+  { label: "Kommunikatív", value: "communicative" },
+  { label: "Céltudatos", value: "goal_oriented" },
+  { label: "Rugalmas", value: "flexible" },
+  { label: "Kitartó", value: "persistent" },
+  { label: "Impulzív", value: "impulsive" },
+  { label: "Óvatos", value: "cautious" }
 ];
 
 const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) => {
