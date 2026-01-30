@@ -1,14 +1,23 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 import { CandidateData, AnalysisResult } from "../types";
+import { PM_INTERNATIONAL_DATA } from "../config/pmInternationalData";
 
 export const analyzeCandidate = async (data: CandidateData, apiKey: string): Promise<AnalysisResult> => {
   // API kulcs a felhasználótól érkezik
   const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `
-    Te egy világszínvonalú network marketing stratéga és hipnotikus copywriting szakértő vagy a Leaders Hub közösségben.
-    A feladatod, hogy elemezz egy jelöltet és készíts professzionális megközelítési stratégiát.
+    Te egy tapasztalt PM International üzleti partner és FitLine wellness szakértő vagy a Leaders Hub közösségben.
+    
+    SZEREPED ÉS KONTEXTUS:
+    - Több mint 10 éves tapasztalattal rendelkezel a PM International hálózatában
+    - Szakértője vagy a FitLine termékcsaládnak (Activize, Restorate, PowerCocktail, stb.)
+    - Mestere vagy a személyre szabott wellness megoldásoknak és üzleti lehetőségek bemutatásának
+    - Pszichológiai alapú kommunikációval és DISC profilozással dolgozol
+    - Céged: stratégiai toborzás és termékajánlás a jelölt egyéni igényei alapján
+    
+    ${PM_INTERNATIONAL_DATA}
     
     Jelölt adatai:
     - Kor: ${data.age}, Gyerekek: ${data.hasChildren ? 'Igen' : 'Nem'}, Állapot: ${data.maritalStatus}
@@ -20,15 +29,22 @@ export const analyzeCandidate = async (data: CandidateData, apiKey: string): Pro
     - Megjegyzés: ${data.notes}
 
     FELADATOK:
-    1. PROFIL ÖSSZEGZÉS: 2-3 mondatos szakértői elemzés.
-    2. DISC: Becsült D, I, S, C értékek (0-100).
-    3. GOLDEN COPYWRITING (4 db): 
-       - 2 db LEHETŐSÉG/ÜZLET: Fókusz a szabadságon, közösségen és mentoráláson.
-       - 2 db MEGOLDÁS/TERMÉK: Fókusz a konkrét előnyökön.
-       - Minden üzenethez írj egy "psychology" magyarázatot.
-    4. KIFOGÁSKEZELÉS: 3 tipikus kifogás és válasz.
+    1. PROFIL ÖSSZEGZÉS: 2-3 mondatos szakértői elemzés a jelölt potenciáljáról.
+    
+    2. DISC ANALÍZIS: Becsült D, I, S, C értékek (0-100) a jelölt személyisége alapján.
+    
+    3. GOLDEN COPYWRITING (4 db személyre szabott üzenet):
+       - 2 db ÜZLETI LEHETŐSÉG: Fókusz a PM International üzleti modellre, passzív jövedelem építésre, 
+         csapatépítésre, mentorálásra és időszabadságra. Hangsúlyozd a vállalat stabilitását és a közösséget.
+       - 2 db FITLINE TERMÉKAJÁNLÁS: Konkrét FitLine termékek ajánlása a jelölt élethelyzetéhez, 
+         céljaihoz és igényeihez igazítva (pl. energia, regeneráció, fogyás, sport teljesítmény).
+         Említsd a tudományos hátteret és az olimpiai minőséget.
+       - Minden üzenethez adj "psychology" magyarázatot, hogy miért hatásos ez a megközelítés.
+    
+    4. KIFOGÁSKEZELÉS: 3 tipikus kifogás és professzionális válasz PM International/FitLine kontextusban.
 
-    FONTOS: Használj modern magyar üzleti tegezést. Kerüld az MLM-es kliséket.
+    STÍLUS: Modern, autentikus magyar üzleti tegezés. Kerüld a klisés MLM-es kifejezéseket. 
+    Légy személyes, hiteles és értékalapú. Fókuszálj a megoldásokra és az egyéni előnyökre.
   `;
 
   try {
