@@ -42,6 +42,7 @@ const TRAITS_OPTIONS = [
 
 const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading, apiKey }) => {
   const [showChatAssistant, setShowChatAssistant] = React.useState(false);
+  const [interimText, setInterimText] = React.useState('');
   const [formData, setFormData] = React.useState<CandidateData>({
     selfDescription: '',
     candidateName: '',
@@ -170,6 +171,11 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading, apiK
       ...prev,
       selfDescription: prev.selfDescription ? `${prev.selfDescription} ${text}` : text
     }));
+    setInterimText('');
+  };
+
+  const handleInterimTranscript = (text: string) => {
+    setInterimText(text);
   };
 
   const handleChatComplete = (description: string) => {
@@ -239,18 +245,26 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading, apiK
           <div className="space-y-4">
             <div className="relative">
               <label className={labelClasses}>Hogyan jellemeznéd magad?</label>
-              <textarea
-                rows={3}
-                value={formData.selfDescription}
-                onChange={e => setFormData({ ...formData, selfDescription: e.target.value })}
-                placeholder="Pl. Közvetlen, barátságos, szeretem a humort. Őszinte vagyok és értékelem a nyílt kommunikációt."
-                className={`${inputClasses} resize-none pt-4`}
-              />
+              <div className="relative">
+                <textarea
+                  rows={3}
+                  value={formData.selfDescription + (interimText ? (formData.selfDescription ? ' ' : '') + interimText : '')}
+                  onChange={e => setFormData({ ...formData, selfDescription: e.target.value })}
+                  placeholder="Pl. Közvetlen, barátságos, szeretem a humort. Őszinte vagyok és értékelem a nyílt kommunikációt."
+                  className={`${inputClasses} resize-none pt-4 transition-all duration-200 ${interimText ? 'border-blue-400 ring-2 ring-blue-50' : ''}`}
+                />
+                {interimText && (
+                  <div className="absolute bottom-3 right-5 text-[10px] font-bold text-blue-400 italic animate-pulse">
+                    Mondd tovább...
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-3">
               <VoiceDictation
                 onTranscript={handleVoiceTranscript}
+                onInterim={handleInterimTranscript}
                 buttonClassName="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-500 transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
               />
               <button

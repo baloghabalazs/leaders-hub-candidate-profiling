@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 
 interface VoiceDictationProps {
     onTranscript: (text: string) => void;
+    onInterim?: (text: string) => void;
     buttonClassName?: string;
 }
 
-const VoiceDictation: React.FC<VoiceDictationProps> = ({ onTranscript, buttonClassName }) => {
+const VoiceDictation: React.FC<VoiceDictationProps> = ({ onTranscript, onInterim, buttonClassName }) => {
     const [isListening, setIsListening] = useState(false);
     const [isSupported, setIsSupported] = useState(false);
     const [recognition, setRecognition] = useState<any>(null);
@@ -24,16 +25,23 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({ onTranscript, buttonCla
 
             recognitionInstance.onresult = (event: any) => {
                 let finalTranscript = '';
+                let interimTranscript = '';
 
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     const transcript = event.results[i][0].transcript;
                     if (event.results[i].isFinal) {
                         finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
                     }
                 }
 
                 if (finalTranscript) {
                     onTranscript(finalTranscript.trim());
+                }
+
+                if (onInterim) {
+                    onInterim(interimTranscript);
                 }
             };
 
