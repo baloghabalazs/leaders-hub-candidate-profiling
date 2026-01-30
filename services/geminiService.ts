@@ -33,7 +33,7 @@ export const analyzeCandidate = async (data: CandidateData, apiKey: string): Pro
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
