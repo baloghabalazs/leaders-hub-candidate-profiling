@@ -120,8 +120,8 @@ const ProfileResult: React.FC<ProfileResultProps> = ({ result, onReset }) => {
               <button
                 onClick={() => handleCopy(msg.text, idx)}
                 className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${copiedIndex === idx
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-[#323d5a] text-white hover:bg-blue-600'
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-[#323d5a] text-white hover:bg-blue-600'
                   }`}
               >
                 {copiedIndex === idx ? 'Másolva!' : 'Szöveg másolása'}
@@ -139,16 +139,32 @@ const ProfileResult: React.FC<ProfileResultProps> = ({ result, onReset }) => {
           </svg>
           Gördülékeny Kifogáskezelés
         </h3>
-        <div className="space-y-8">
+        <div className="space-y-12">
           {result.objections.map((obj, i) => (
-            <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-3xl bg-gray-50/50 border border-gray-100">
-              <div>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Potenciális kifogás:</span>
-                <p className="text-sm font-bold text-[#323d5a]">"{obj.objection}"</p>
+            <div key={i} className="relative space-y-4">
+              {/* Objection */}
+              <div className="flex items-start gap-4 pr-12">
+                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0 mt-1">
+                  <span className="text-xl">⚠️</span>
+                </div>
+                <div className="bg-slate-50/80 border border-slate-100 rounded-[2rem] p-6 flex-1 shadow-sm">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Potenciális kifogás:</span>
+                  <p className="text-sm font-bold text-[#323d5a] italic leading-relaxed">"{obj.objection}"</p>
+                </div>
               </div>
-              <div className="border-l-0 md:border-l border-gray-200 pl-0 md:pl-8">
-                <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2">Leaders Hub válasz:</span>
-                <p className="text-sm font-semibold text-gray-600 italic">"{obj.rebuttal}"</p>
+
+              {/* Connecting line idea - simplified with spacing */}
+
+              {/* Rebuttal */}
+              <div className="flex items-start gap-4 pl-12">
+                <div className="bg-white border-2 border-blue-50 rounded-[2rem] p-6 flex-1 shadow-xl shadow-blue-50/50 relative">
+                  <div className="absolute -left-3 top-6 w-3 h-3 bg-white border-l-2 border-b-2 border-blue-50 rotate-45"></div>
+                  <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2">Leaders Hub válasz (Expert Recommendation):</span>
+                  <p className="text-sm font-black text-[#323d5a] leading-relaxed">"{obj.rebuttal}"</p>
+                </div>
+                <div className="w-10 h-10 rounded-xl hub-gradient-bg flex items-center justify-center flex-shrink-0 mt-1 shadow-lg shadow-blue-100">
+                  <span className="text-xl">✅</span>
+                </div>
               </div>
             </div>
           ))}
