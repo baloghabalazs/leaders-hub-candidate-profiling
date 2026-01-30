@@ -5,7 +5,8 @@ import {
   AgeRange,
   MaritalStatus,
   Motivation,
-  TimeFrame
+  TimeFrame,
+  RelationshipType
 } from '../types';
 
 interface CandidateFormProps {
@@ -38,6 +39,9 @@ const TRAITS_OPTIONS = [
 
 const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) => {
   const [formData, setFormData] = React.useState<CandidateData>({
+    selfDescription: '',
+    candidateName: '',
+    relationshipType: RelationshipType.ACQUAINTANCE,
     age: AgeRange.A30_35,
     hasChildren: false,
     maritalStatus: MaritalStatus.SINGLE,
@@ -55,6 +59,9 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
     // Random példa profilok
     const exampleProfiles = [
       {
+        selfDescription: 'Közvetlen, barátságos, szeretem a humort. Őszinte vagyok és értékelem a nyílt kommunikációt.',
+        candidateName: 'Kiss András',
+        relationshipType: RelationshipType.ACQUAINTANCE,
         age: AgeRange.A30_35,
         hasChildren: true,
         maritalStatus: MaritalStatus.MARRIED,
@@ -68,6 +75,9 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
         notes: 'Ambiciózus, keresi az új kihívásokat. Szeretne kilépni a mókuskerékből és saját vállalkozást építeni, ahol ő osztja be az idejét. Fontos számára a közösség és a szakmai elismerés.',
       },
       {
+        selfDescription: 'Energikus, pozitív, szeretek inspirálni másokat. Egészségtudatos életmódot élek.',
+        candidateName: 'Nagy Petra',
+        relationshipType: RelationshipType.SOCIAL_MEDIA,
         age: AgeRange.A25_30,
         hasChildren: false,
         maritalStatus: MaritalStatus.SINGLE,
@@ -81,6 +91,9 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
         notes: 'Szenvedélyes az egészséges életmód iránt. Szeretne segíteni másoknak is elérni a céljaikat. Nyitott az új lehetőségekre, de óvatos a döntéseknél.',
       },
       {
+        selfDescription: 'Megfontolt, professzionális, szeretem az adatokat és a tényeket. Óvatos vagyok az új dolgokkal.',
+        candidateName: 'Kovács Éva',
+        relationshipType: RelationshipType.COLD,
         age: AgeRange.A40_PLUS,
         hasChildren: true,
         maritalStatus: MaritalStatus.MARRIED,
@@ -94,6 +107,9 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
         notes: 'Elégedetlen a jelenlegi jövedelmével. Szeretne extra bevételt, de fontos számára a biztonság. Szeret tanítani és segíteni másoknak.',
       },
       {
+        selfDescription: 'Kreatív, laza, szeretem a kihívásokat. Gyorsan döntök és nem félek a változásoktól.',
+        candidateName: 'Szabó Márk',
+        relationshipType: RelationshipType.FRIEND,
         age: AgeRange.A35_40,
         hasChildren: false,
         maritalStatus: MaritalStatus.OTHER,
@@ -107,6 +123,9 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
         notes: 'Válás után új életet szeretne kezdeni. Gyors döntéshozó, szereti az önállóságot. Tapasztalt a digitális marketingben.',
       },
       {
+        selfDescription: 'Tapasztalt, támogató, szeretem a csapatmunkát. Értékelem a kitartást és a lojalitást.',
+        candidateName: 'Tóth Gábor',
+        relationshipType: RelationshipType.REFERRAL,
         age: AgeRange.A40_PLUS,
         hasChildren: true,
         maritalStatus: MaritalStatus.MARRIED,
@@ -120,6 +139,9 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
         notes: 'Sikeres vállalkozó, aki új kihívásokat keres. Szereti az embereket és a csapatmunkát. Tapasztalt az üzleti életben.',
       },
       {
+        selfDescription: 'Fiatalos, nyitott, szeretem az új dolgokat. Még tanulok, de ambiciózus vagyok.',
+        candidateName: 'Molnár Lili',
+        relationshipType: RelationshipType.OTHER,
         age: AgeRange.A20_25,
         hasChildren: false,
         maritalStatus: MaritalStatus.SINGLE,
@@ -192,12 +214,46 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-14">
+        {/* Magamról szekció */}
+        <section>
+          <h3 className={sectionTitleClasses}>
+            <span className="w-10 h-10 rounded-2xl hub-gradient-bg text-white shadow-lg shadow-blue-100 flex items-center justify-center text-sm font-black italic">00</span>
+            Magamról
+          </h3>
+          <div>
+            <label className={labelClasses}>Hogyan jellemeznéd magad?</label>
+            <textarea
+              rows={3}
+              value={formData.selfDescription}
+              onChange={e => setFormData({ ...formData, selfDescription: e.target.value })}
+              placeholder="Pl. Közvetlen, barátságos, szeretem a humort. Őszinte vagyok és értékelem a nyílt kommunikációt."
+              className={`${inputClasses} resize-none pt-4`}
+            />
+            <p className="text-[10px] text-gray-400 mt-2 ml-1 font-medium">💡 Az AI ezt használja a megkeresési üzenetek hangneme személyre szabásához</p>
+          </div>
+        </section>
+
         <section>
           <h3 className={sectionTitleClasses}>
             <span className="w-10 h-10 rounded-2xl hub-gradient-bg text-white shadow-lg shadow-blue-100 flex items-center justify-center text-sm font-black italic">01</span>
             Személyes Adatok
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="md:col-span-2">
+              <label className={labelClasses}>Jelölt neve</label>
+              <input
+                type="text"
+                value={formData.candidateName}
+                onChange={e => setFormData({ ...formData, candidateName: e.target.value })}
+                placeholder="Pl. Kiss András"
+                className={inputClasses}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              {renderPills("Kapcsolat típusa", Object.values(RelationshipType), formData.relationshipType, (v) => setFormData({ ...formData, relationshipType: v }))}
+            </div>
+
             <div className="md:col-span-2">
               {renderPills("Életkor", Object.values(AgeRange), formData.age, (v) => setFormData({ ...formData, age: v }))}
             </div>

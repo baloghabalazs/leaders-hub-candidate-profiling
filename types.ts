@@ -26,7 +26,19 @@ export enum TimeFrame {
   T10_PLUS = 'Heti 10+ óra'
 }
 
+export enum RelationshipType {
+  FRIEND = 'Barát',
+  ACQUAINTANCE = 'Ismerős',
+  COLD = 'Hideg',
+  REFERRAL = 'Ajánlás',
+  SOCIAL_MEDIA = 'Közösségi média',
+  OTHER = 'Egyéb'
+}
+
 export interface CandidateData {
+  selfDescription: string; // User's self-description for tone matching
+  candidateName: string;
+  relationshipType: RelationshipType;
   age: AgeRange;
   hasChildren: boolean;
   maritalStatus: MaritalStatus;

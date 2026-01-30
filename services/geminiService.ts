@@ -19,7 +19,20 @@ export const analyzeCandidate = async (data: CandidateData, apiKey: string): Pro
     
     ${PM_INTERNATIONAL_DATA}
     
+    KOMMUNIKÁCIÓS STÍLUS (FELHASZNÁLÓ ÖNLEÍRÁSA):
+    "${data.selfDescription || 'Professzionális, barátságos, értékalapú kommunikáció'}"
+    
+    FONTOS: A megkeresési üzeneteket az alábbi stílusban írd, hogy tükrözze a felhasználó személyiségét és kommunikációs módját.
+    Használd ugyanazt a hangnemet, kifejezésmódot és megközelítést, amit a felhasználó leírt magáról.
+    
     Jelölt adatai:
+    - Név: ${data.candidateName || 'Jelölt'}
+    - Kapcsolat típusa: ${data.relationshipType}
+      * Barát/Ismerős: Személyesebb, melegebb hangnem, hivatkozz közös élményekre
+      * Hideg: Professzionálisabb, értékalapú megközelítés, fókusz az előnyökön
+      * Ajánlás: Említsd meg a közös ismerőst vagy ajánlót
+      * Közösségi média: Modern, online-barát hangnem
+      * Egyéb: Alkalmazkodj a kontextushoz
     - Kor: ${data.age}, Gyerekek: ${data.hasChildren ? 'Igen' : 'Nem'}, Állapot: ${data.maritalStatus}
     - Lakhely: ${data.residence}, Szakma: ${data.occupation}
     - Jellemzők: ${data.traits.join(', ')}
