@@ -6,51 +6,55 @@ import ProfileResult from './components/ProfileResult';
 import { analyzeCandidate } from './services/geminiService';
 import { CandidateData, AnalysisResult } from './types';
 
-// Kibővített ablak típus definíció a biztonságos híváshoz
-// Fix: Use AIStudio type directly to avoid redeclaration conflicts with existing definitions in the environment.
-declare global {
-  interface Window {
-    aistudio: AIStudio;
-  }
-}
-
 const App: React.FC = () => {
+  const [apiKey, setApiKey] = useState<string>('');
+  const [tempApiKey, setTempApiKey] = useState<string>('');
   const [hasKey, setHasKey] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const checkKey = async () => {
-      try {
-        const selected = await window.aistudio.hasSelectedApiKey();
-        setHasKey(selected);
-      } catch (err) {
-        setHasKey(false);
-      }
-    };
-    checkKey();
+    // Check for API key in localStorage
+    const storedKey = localStorage.getItem('gemini_api_key');
+    if (storedKey) {
+      setApiKey(storedKey);
+      setHasKey(true);
+    } else {
+      setHasKey(false);
+    }
   }, []);
 
-  const handleOpenKeySelector = async () => {
-    await window.aistudio.openSelectKey();
-    // A guideline alapján a választás után azonnal továbblépünk, feltételezve a sikert
-    setHasKey(true);
+  const handleSaveApiKey = () => {
+    if (tempApiKey.trim()) {
+      localStorage.setItem('gemini_api_key', tempApiKey.trim());
+      setApiKey(tempApiKey.trim());
+      setHasKey(true);
+      setTempApiKey('');
+    }
+  };
+
+  const handleClearApiKey = () => {
+    localStorage.removeItem('gemini_api_key');
+    setApiKey('');
+    setHasKey(false);
+    setResult(null);
+    setError(null);
   };
 
   const handleAnalyze = async (data: CandidateData) => {
     setIsLoading(true);
     setError(null);
     try {
-      const analysisResult = await analyzeCandidate(data);
+      const analysisResult = await analyzeCandidate(data, apiKey);
       setResult(analysisResult);
       setTimeout(() => {
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       }, 300);
     } catch (err: any) {
-      if (err.message?.includes("Requested entity was not found")) {
-        setHasKey(false);
-        setError("Az API kulcs nem érvényes vagy nem található. Kérlek válaszd ki újra!");
+      if (err.message?.includes("API_KEY_INVALID") || err.message?.includes("API key not valid")) {
+        setError("Az API kulcs nem érvényes. Kérlek ellenőrizd és add meg újra!");
+        handleClearApiKey();
       } else {
         setError(err.message || 'Hiba történt az elemzés során.');
       }
@@ -76,18 +80,46 @@ const App: React.FC = () => {
             <span className="ml-1 bg-[#3b82f6] text-white px-3 py-1 rounded-xl shadow-lg shadow-blue-100">HUB</span>
           </div>
           <h2 className="text-2xl font-black text-[#323d5a] mb-4 leading-tight uppercase tracking-tight">Üdvözlünk a Stratégiai Központban</h2>
-          <p className="text-gray-500 mb-10 font-medium">Az elemzés megkezdéséhez kérjük, válaszd ki az API kulcsodat. Győződj meg róla, hogy a választott kulcs egy <span className="text-blue-600 font-bold">fizetős projekthez</span> kapcsolódik.</p>
-          
-          <button 
-            onClick={handleOpenKeySelector}
-            className="w-full hub-gradient-bg text-white font-black py-6 rounded-3xl text-xl shadow-2xl shadow-blue-200 hover:scale-[1.02] active:scale-[0.98] transition-all mb-6"
+          <p className="text-gray-500 mb-10 font-medium">Az elemzés megkezdéséhez add meg a Gemini API kulcsodat. Győződj meg róla, hogy a kulcs egy <span className="text-blue-600 font-bold">fizetős projekthez</span> kapcsolódik.</p>
+
+          <div className="mb-6 text-left">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">
+              Gemini API Kulcs
+            </label>
+            <input
+              type="password"
+              value={tempApiKey}
+              onChange={(e) => setTempApiKey(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSaveApiKey()}
+              placeholder="AIza..."
+              className="w-full px-5 py-4 rounded-2xl bg-white border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all shadow-sm text-sm font-medium"
+            />
+          </div>
+
+          <button
+            onClick={handleSaveApiKey}
+            disabled={!tempApiKey.trim()}
+            className={`w-full font-black py-6 rounded-3xl text-xl shadow-2xl transition-all mb-6 ${tempApiKey.trim()
+              ? 'hub-gradient-bg text-white shadow-blue-200 hover:scale-[1.02] active:scale-[0.98]'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
           >
-            API KULCS KIVÁLASZTÁSA
+            API KULCS MENTÉSE
           </button>
-          
-          <a 
-            href="https://ai.google.dev/gemini-api/docs/billing" 
-            target="_blank" 
+
+          <div className="space-y-3 text-left bg-blue-50/50 rounded-2xl p-6 mb-6">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Hogyan szerezz API kulcsot?</p>
+            <ol className="text-xs text-gray-600 space-y-2 font-medium list-decimal list-inside">
+              <li>Látogass el a <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-bold">Google AI Studio</a> oldalra</li>
+              <li>Jelentkezz be Google fiókoddal</li>
+              <li>Kattints a "Create API key" gombra</li>
+              <li>Másold ki a kulcsot és illeszd be ide</li>
+            </ol>
+          </div>
+
+          <a
+            href="https://ai.google.dev/gemini-api/docs/billing"
+            target="_blank"
             rel="noopener noreferrer"
             className="text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-blue-500 transition-colors"
           >
@@ -104,7 +136,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      
+
       <main className="max-w-4xl mx-auto px-6 py-12 md:py-20">
         <div className="mb-16 text-center">
           <div className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
@@ -131,7 +163,7 @@ const App: React.FC = () => {
           {!result && (
             <CandidateForm onSubmit={handleAnalyze} isLoading={isLoading} />
           )}
-          
+
           {result && (
             <ProfileResult result={result} onReset={reset} />
           )}
@@ -145,9 +177,15 @@ const App: React.FC = () => {
             <span className="ml-1 bg-[#3b82f6] text-white px-2 py-0.5 rounded-md">HUB</span>
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-300 mb-2">Strategy Hub - AI Powered Recruitment</p>
-          <p className="text-[10px] font-medium text-gray-400">
+          <p className="text-[10px] font-medium text-gray-400 mb-6">
             &copy; {new Date().getFullYear()} Leaders Hub. Minden jog fenntartva.
           </p>
+          <button
+            onClick={handleClearApiKey}
+            className="text-[9px] font-bold text-gray-300 hover:text-red-400 transition-colors uppercase tracking-widest"
+          >
+            🔑 API Kulcs Törlése
+          </button>
         </div>
       </footer>
     </div>

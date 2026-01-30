@@ -2,10 +2,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { CandidateData, AnalysisResult } from "../types";
 
-export const analyzeCandidate = async (data: CandidateData): Promise<AnalysisResult> => {
-  // Mindig új példányt hozunk létre a legfrissebb API kulcs biztosításához
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
+export const analyzeCandidate = async (data: CandidateData, apiKey: string): Promise<AnalysisResult> => {
+  // API kulcs a felhasználótól érkezik
+  const ai = new GoogleGenAI({ apiKey });
+
   const prompt = `
     Te egy világszínvonalú network marketing stratéga és hipnotikus copywriting szakértő vagy a Leaders Hub közösségben.
     A feladatod, hogy elemezz egy jelöltet és készíts professzionális megközelítési stratégiát.
