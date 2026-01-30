@@ -47,9 +47,10 @@ const SelfDescriptionChat: React.FC<SelfDescriptionChatProps> = ({ apiKey, onCom
                 setMessages([...updatedMessages, { role: 'assistant', content: aiResponse }]);
             }
         } catch (error: any) {
+            console.error("Chat error details:", error);
             setMessages([...updatedMessages, {
                 role: 'assistant',
-                content: 'Sajnálom, hiba történt. Próbáld újra!'
+                content: `Sajnálom, hiba történt a beszélgetés során: ${error.message || 'Ismeretlen hiba'}. Ellenőrizd az API kulcsodat!`
             }]);
         } finally {
             setIsLoading(false);
@@ -91,8 +92,8 @@ const SelfDescriptionChat: React.FC<SelfDescriptionChatProps> = ({ apiKey, onCom
                         >
                             <div
                                 className={`max-w-[80%] px-5 py-3 rounded-2xl ${msg.role === 'user'
-                                        ? 'hub-gradient-bg text-white shadow-lg shadow-blue-100'
-                                        : 'bg-gray-50 text-gray-800 border border-gray-100'
+                                    ? 'hub-gradient-bg text-white shadow-lg shadow-blue-100'
+                                    : 'bg-gray-50 text-gray-800 border border-gray-100'
                                     }`}
                             >
                                 <p className="text-sm font-medium whitespace-pre-wrap">{msg.content}</p>
@@ -129,8 +130,8 @@ const SelfDescriptionChat: React.FC<SelfDescriptionChatProps> = ({ apiKey, onCom
                             onClick={handleSend}
                             disabled={!input.trim() || isLoading}
                             className={`px-6 py-3 rounded-2xl font-bold text-sm transition-all ${input.trim() && !isLoading
-                                    ? 'hub-gradient-bg text-white shadow-lg shadow-blue-100 hover:scale-105'
-                                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                ? 'hub-gradient-bg text-white shadow-lg shadow-blue-100 hover:scale-105'
+                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                 }`}
                         >
                             Küldés
