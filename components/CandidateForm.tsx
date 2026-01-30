@@ -8,10 +8,13 @@ import {
   TimeFrame,
   RelationshipType
 } from '../types';
+import VoiceDictation from './VoiceDictation';
+import SelfDescriptionChat from './SelfDescriptionChat';
 
 interface CandidateFormProps {
   onSubmit: (data: CandidateData) => void;
   isLoading: boolean;
+  apiKey: string;
 }
 
 const TRAITS_OPTIONS = [
@@ -37,7 +40,8 @@ const TRAITS_OPTIONS = [
   { label: "Óvatos", value: "cautious" }
 ];
 
-const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) => {
+const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading, apiKey }) => {
+  const [showChatAssistant, setShowChatAssistant] = React.useState(false);
   const [formData, setFormData] = React.useState<CandidateData>({
     selfDescription: '',
     candidateName: '',
@@ -161,6 +165,18 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
     setFormData(randomProfile);
   };
 
+  const handleVoiceTranscript = (text: string) => {
+    setFormData(prev => ({
+      ...prev,
+      selfDescription: prev.selfDescription ? `${prev.selfDescription} ${text}` : text
+    }));
+  };
+
+  const handleChatComplete = (description: string) => {
+    setFormData(prev => ({ ...prev, selfDescription: description }));
+    setShowChatAssistant(false);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -220,18 +236,45 @@ const CandidateForm: React.FC<CandidateFormProps> = ({ onSubmit, isLoading }) =>
             <span className="w-10 h-10 rounded-2xl hub-gradient-bg text-white shadow-lg shadow-blue-100 flex items-center justify-center text-sm font-black italic">00</span>
             Magamról
           </h3>
-          <div>
-            <label className={labelClasses}>Hogyan jellemeznéd magad?</label>
-            <textarea
-              rows={3}
-              value={formData.selfDescription}
-              onChange={e => setFormData({ ...formData, selfDescription: e.target.value })}
-              placeholder="Pl. Közvetlen, barátságos, szeretem a humort. Őszinte vagyok és értékelem a nyílt kommunikációt."
-              className={`${inputClasses} resize-none pt-4`}
-            />
-            <p className="text-[10px] text-gray-400 mt-2 ml-1 font-medium">💡 Az AI ezt használja a megkeresési üzenetek hangneme személyre szabásához</p>
+          <div className="space-y-4">
+            <div className="relative">
+              <label className={labelClasses}>Hogyan jellemeznéd magad?</label>
+              <textarea
+                rows={3}
+                value={formData.selfDescription}
+                onChange={e => setFormData({ ...formData, selfDescription: e.target.value })}
+                placeholder="Pl. Közvetlen, barátságos, szeretem a humort. Őszinte vagyok és értékelem a nyílt kommunikációt."
+                className={`${inputClasses} resize-none pt-4`}
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <VoiceDictation
+                onTranscript={handleVoiceTranscript}
+                buttonClassName="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-500 transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
+              />
+              <button
+                type="button"
+                onClick={() => setShowChatAssistant(true)}
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-500 transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                </svg>
+                <span>💬 AI Segítség</span>
+              </button>
+            </div>
+            <p className="text-[10px] text-gray-400 mt-2 ml-1 font-medium">💡 Az AI ezt használja a megkeresési üzenetek hangneme személyre szabásához. Diktálhatsz hanggal, vagy kérheted az AI segítségét a megfogalmazáshoz.</p>
           </div>
         </section>
+
+        {showChatAssistant && (
+          <SelfDescriptionChat
+            apiKey={apiKey}
+            onComplete={handleChatComplete}
+            onClose={() => setShowChatAssistant(false)}
+          />
+        )}
 
         <section>
           <h3 className={sectionTitleClasses}>

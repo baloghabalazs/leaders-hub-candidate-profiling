@@ -161,7 +161,11 @@ const App: React.FC = () => {
 
         <div className="space-y-12">
           {!result && (
-            <CandidateForm onSubmit={handleAnalyze} isLoading={isLoading} />
+            <CandidateForm
+              onSubmit={handleAnalyze}
+              isLoading={isLoading}
+              apiKey={apiKey}
+            />
           )}
 
           {result && (
